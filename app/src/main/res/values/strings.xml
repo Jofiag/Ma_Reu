@@ -10,4 +10,9 @@
     <string name="meeting_subject">Sujet</string>
     <string name="number_of_participant">Nombre de participant : 0</string>
     <string name="add_participant">Ajouter un participant</string>
+    <string name="content_description">profile</string>
+    <string name="time">- Time</string>
+    <string name="placa">- Placa</string>
+    <string name="place">- Place</string>
+    <string name="participant_email">Participant email</string>
 </resources>
