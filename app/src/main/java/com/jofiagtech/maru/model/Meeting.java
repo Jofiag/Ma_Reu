@@ -1,5 +1,7 @@
 package com.jofiagtech.maru.model;
 
+import java.util.List;
+
 public class Meeting
 {
     private String subject;
@@ -12,10 +14,21 @@ public class Meeting
     public Meeting() {
     }
 
-    public Meeting(String subject, String time, String place, int numberOfParticipant) {
+    public Meeting(String subject, String time, String place, int numberOfParticipant)
+    {
         this.subject = subject;
         this.time = time;
         this.place = place;
+        this.numberOfParticipant = numberOfParticipant;
+    }
+
+    public int getNumberOfParticipant()
+    {
+        return numberOfParticipant;
+    }
+
+    public void setNumberOfParticipant(int numberOfParticipant)
+    {
         this.numberOfParticipant = numberOfParticipant;
     }
 
@@ -57,15 +70,5 @@ public class Meeting
     public void setPlace(String place)
     {
         this.place = place;
-    }
-
-    public int getNumberOfParticipant()
-    {
-        return numberOfParticipant;
-    }
-
-    public void setNumberOfParticipant(int numberOfParticipant)
-    {
-        this.numberOfParticipant = numberOfParticipant;
     }
 }
