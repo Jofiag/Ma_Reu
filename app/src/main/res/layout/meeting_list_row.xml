@@ -8,12 +8,12 @@
 
     <androidx.cardview.widget.CardView
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:padding="10dp">
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:orientation="horizontal">
 
             <ImageView
@@ -21,9 +21,9 @@
                 android:layout_width="30dp"
                 android:layout_height="60dp"
                 android:layout_marginStart="20dp"
-                android:src="@mipmap/ic_launcher_round"
+                android:layout_marginLeft="20dp"
                 android:contentDescription="@string/content_description"
-                android:layout_marginLeft="20dp" />
+                android:src="@mipmap/ic_launcher_round" />
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -40,43 +40,75 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="10dp"
+                        android:layout_marginLeft="10dp"
                         android:text="@string/meeting_subject"
                         android:textSize="30sp"
-                        android:textStyle="bold"
-                        android:layout_marginLeft="10dp" />
+                        android:textStyle="bold" />
 
                     <TextView
-                        android:id="@+id/mlt_time"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="10dp"
+                        android:layout_marginLeft="10dp"
+                        android:layout_marginEnd="10dp"
+                        android:text="@string/separation"
+                        android:textSize="30sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/mlr_time"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
                         android:text="@string/time"
                         android:textSize="30sp"
-                        android:textStyle="bold"
-                        android:layout_marginLeft="10dp" />
+                        android:textStyle="bold" />
 
                     <TextView
-                        android:id="@+id/mir_place"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="10dp"
+                        android:layout_marginLeft="10dp"
+                        android:layout_marginEnd="10dp"
+                        android:text="@string/separation"
+                        android:textSize="30sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/mlr_place"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
                         android:text="@string/place"
                         android:textSize="30sp"
-                        android:textStyle="bold"
+                        android:textStyle="bold" />
+
+                    <ImageButton
+                        android:id="@+id/delete_button"
+                        android:layout_width="47dp"
+                        android:layout_height="match_parent"
+                        android:layout_marginStart="10dp"
+                        android:src="@drawable/ic_delete_black_24dp"
                         android:layout_marginLeft="10dp" />
 
                 </LinearLayout>
 
                 <TextView
-                    android:id="@+id/participant_email"
+                    android:id="@+id/mlr_participant_email"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="10dp"
-                    android:text="@string/participant_email"
-                    android:layout_marginLeft="10dp" />
+                    android:layout_marginLeft="10dp"
+                    android:text="@string/participant_email" />
 
+                <TextView
+                android:id="@+id/mlr_participant_date"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:layout_marginLeft="10dp"
+                android:text="@string/date" />
 
             </LinearLayout>
+
 
         </LinearLayout>
 
