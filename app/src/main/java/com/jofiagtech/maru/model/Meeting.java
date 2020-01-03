@@ -7,6 +7,8 @@ public class Meeting
     private String place;
     private int numberOfParticipant;
 
+    private int id;
+
     public Meeting() {
     }
 
@@ -15,6 +17,16 @@ public class Meeting
         this.time = time;
         this.place = place;
         this.numberOfParticipant = numberOfParticipant;
+    }
+
+    public int getId()
+    {
+        return id;
+    }
+
+    public void setId(int id)
+    {
+        this.id = id;
     }
 
     public String getSubject()
