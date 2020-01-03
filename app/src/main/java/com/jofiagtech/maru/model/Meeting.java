@@ -7,8 +7,8 @@ public class Meeting
     private String subject;
     private String time;
     private String place;
+    private String date;
     private int numberOfParticipant;
-
     private int id;
 
     public Meeting() {
@@ -20,6 +20,16 @@ public class Meeting
         this.time = time;
         this.place = place;
         this.numberOfParticipant = numberOfParticipant;
+    }
+
+    public String getDate()
+    {
+        return date;
+    }
+
+    public void setDate(String date)
+    {
+        this.date = date;
     }
 
     public int getNumberOfParticipant()

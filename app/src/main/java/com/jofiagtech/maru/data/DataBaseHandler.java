@@ -10,7 +10,9 @@ import com.jofiagtech.maru.model.Meeting;
 import com.jofiagtech.maru.model.Participant;
 import com.jofiagtech.maru.util.Constants;
 
+import java.text.DateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 public class DataBaseHandler extends SQLiteOpenHelper
@@ -32,7 +34,8 @@ public class DataBaseHandler extends SQLiteOpenHelper
                 + Constants.COLUMN_SUBJECT + "TEXT, "
                 + Constants.COLUMN_TIME + "TEXT, "
                 + Constants.COLUMN_PLACE + "TEXT, "
-                + Constants.COLUMN_NUMBER_OF_PARTICIPANT + "INTEGER"
+                + Constants.COLUMN_NUMBER_OF_PARTICIPANT + "INTEGER, "
+                + Constants.COLUMN_DATE + "LONG"
                 + ");";
 
         String CREATE_PARTICIPANT_TABLE = "CREATE TABLE " + Constants.TABLE_NAME_B
@@ -62,6 +65,7 @@ public class DataBaseHandler extends SQLiteOpenHelper
         values.put(Constants.COLUMN_TIME, meeting.getTime());
         values.put(Constants.COLUMN_PLACE, meeting.getPlace());
         values.put(Constants.COLUMN_NUMBER_OF_PARTICIPANT, meeting.getNumberOfParticipant());
+        values.put(Constants.COLUMN_DATE, System.currentTimeMillis());
 
         return values;
     }
@@ -81,7 +85,8 @@ public class DataBaseHandler extends SQLiteOpenHelper
                         Constants.COLUMN_SUBJECT,
                         Constants.COLUMN_TIME,
                         Constants.COLUMN_PLACE,
-                        Constants.COLUMN_NUMBER_OF_PARTICIPANT},
+                        Constants.COLUMN_NUMBER_OF_PARTICIPANT,
+                        Constants.COLUMN_DATE},
                 Constants.COLUMN_ID + "=?",
                 new String[]{String.valueOf(id)},null, null, null);
 
@@ -92,6 +97,13 @@ public class DataBaseHandler extends SQLiteOpenHelper
             meeting.setTime(cursor.getString(2));
             meeting.setPlace(cursor.getString(3));
             meeting.setNumberOfParticipant(cursor.getInt(4));
+
+            //convert Timestamp to something readable
+            DateFormat dateFormat = DateFormat.getDateInstance();
+            String formattedDate = dateFormat.format(new Date(cursor.getLong(cursor.getColumnIndex(Constants.COLUMN_DATE)))
+                    .getTime()); // Feb 23, 2020
+
+            meeting.setDate(formattedDate);
             cursor.close();
         }
 
@@ -108,10 +120,13 @@ public class DataBaseHandler extends SQLiteOpenHelper
                         Constants.COLUMN_SUBJECT,
                         Constants.COLUMN_TIME,
                         Constants.COLUMN_PLACE,
-                        Constants.COLUMN_NUMBER_OF_PARTICIPANT},
+                        Constants.COLUMN_NUMBER_OF_PARTICIPANT,
+                        Constants.COLUMN_DATE},
                 Constants.COLUMN_ID + "=?",
                 null ,null, null,
-                Constants.COLUMN_TIME + "ASC");
+                Constants.COLUMN_DATE + "DESC");
+
+
 
         if (cursor.moveToFirst()){
             do {
@@ -121,6 +136,13 @@ public class DataBaseHandler extends SQLiteOpenHelper
                 meeting.setTime(cursor.getString(2));
                 meeting.setPlace(cursor.getString(3));
                 meeting.setNumberOfParticipant(cursor.getInt(4));
+
+                //convert Timestamp to something readable
+                DateFormat dateFormat = DateFormat.getDateInstance();
+                String formattedDate = dateFormat.format(new Date(cursor.getLong(cursor.getColumnIndex(Constants.COLUMN_DATE)))
+                        .getTime()); // Feb 23, 2020
+
+                meeting.setDate(formattedDate);
 
                 meetingList.add(meeting);
             }while (cursor.moveToNext());

@@ -15,6 +15,7 @@ public class Constants implements BaseColumns
     public static final String COLUMN_TIME = "time";
     public static final String COLUMN_PLACE = "place";
     public static final String COLUMN_NUMBER_OF_PARTICIPANT = "number_of_participant";
+    public static final String COLUMN_DATE = "date";
 
     //participant table column
     public static final String COLUMN_ID_B = "participant_id";
