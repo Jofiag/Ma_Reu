@@ -11,10 +11,20 @@ import androidx.appcompat.widget.Toolbar;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Button;
 import android.widget.TextView;
 
 public class MainActivity extends AppCompatActivity
 {
+    /*private TextView mMeetingSubject;
+    private TextView mMeetingTime;
+    private TextView mMeetingPlace;
+    private TextView mNumberOfParticipant;
+    private Button mAddParticipantButton;
+    private Button mSaveMeetingButton;
+    private Button mSaveParticipantButton;
+
+    private int mParticipantCounter = 0;*/
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -24,6 +34,10 @@ public class MainActivity extends AppCompatActivity
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+        settingFab();
+    }
+
+    private void settingFab(){
         FloatingActionButton fab = findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener()
         {
@@ -35,6 +49,10 @@ public class MainActivity extends AppCompatActivity
             }
         });
     }
+
+    /*private void creatMeetingPopup(){}
+
+    private void createParticipantPopup(){}*/
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu)
