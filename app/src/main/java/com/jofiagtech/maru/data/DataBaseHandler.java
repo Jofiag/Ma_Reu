@@ -7,6 +7,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
 import com.jofiagtech.maru.model.Meeting;
+import com.jofiagtech.maru.model.Participant;
 import com.jofiagtech.maru.util.Constants;
 
 import java.util.ArrayList;
@@ -34,17 +35,28 @@ public class DataBaseHandler extends SQLiteOpenHelper
                 + Constants.COLUMN_NUMBER_OF_PARTICIPANT + "INTEGER"
                 + ");";
 
+        String CREATE_PARTICIPANT_TABLE = "CREATE TABLE " + Constants.TABLE_NAME_B
+                + "("
+                + Constants.COLUMN_ID_B + "INTEGER PRIMARY KEY"
+                + Constants.COLUMN_EMAIL + "TEXT"
+                + ");";
+
         db.execSQL(CREATE_MEETING_TABLE);
+        db.execSQL(CREATE_PARTICIPANT_TABLE);
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int i, int i1)
     {
         db.execSQL("DROP TABLE IF EXISTS" + Constants.TABLE_NAME);
+        db.execSQL("DROP TABLE IF EXISTS" + Constants.TABLE_NAME_B);
+
         onCreate(db);
     }
 
-    private ContentValues getTableValue(Meeting meeting){
+    //////////////////// MEETING TABLE ////////////////////
+
+        private ContentValues getTableValue(Meeting meeting){
         ContentValues values = new ContentValues();
         values.put(Constants.COLUMN_SUBJECT, meeting.getSubject());
         values.put(Constants.COLUMN_TIME, meeting.getTime());
@@ -53,13 +65,13 @@ public class DataBaseHandler extends SQLiteOpenHelper
 
         return values;
     }
-    public void addMeeting(Meeting meeting){
+        public void addMeeting(Meeting meeting){
         SQLiteDatabase db = this.getWritableDatabase();
 
         db.insert(Constants.TABLE_NAME, null, getTableValue(meeting));
     }
 
-    public Meeting getMeeting(int id){
+        public Meeting getMeeting(int id){
         SQLiteDatabase db = this.getReadableDatabase();
 
         Meeting meeting = new Meeting();
@@ -86,7 +98,7 @@ public class DataBaseHandler extends SQLiteOpenHelper
         return meeting;
     }
 
-    public List<Meeting> getAllMeeting(){
+        public List<Meeting> getAllMeeting(){
         SQLiteDatabase db = this.getReadableDatabase();
 
         List<Meeting> meetingList = new ArrayList<>();
@@ -119,7 +131,7 @@ public class DataBaseHandler extends SQLiteOpenHelper
         return meetingList;
     }
 
-    public int updateMeeting(Meeting meeting){
+        public int updateMeeting(Meeting meeting){
         SQLiteDatabase db = this.getWritableDatabase();
 
         int update = db.update(Constants.TABLE_NAME, getTableValue(meeting),
@@ -131,7 +143,7 @@ public class DataBaseHandler extends SQLiteOpenHelper
         return update;
     }
 
-    public void deleteMeeting(int id){
+        public void deleteMeeting(int id){
         SQLiteDatabase db = this.getWritableDatabase();
 
         db.delete(Constants.TABLE_NAME, Constants.COLUMN_ID + "=?",
@@ -140,7 +152,7 @@ public class DataBaseHandler extends SQLiteOpenHelper
         db.close();
     }
 
-    public void deleteAllItem(){
+        public void deleteAllItem(){
         SQLiteDatabase db = this.getReadableDatabase();
 
         for (Meeting meeting : getAllMeeting()){
@@ -149,7 +161,7 @@ public class DataBaseHandler extends SQLiteOpenHelper
         }
     }
 
-    public int getMeetingCount(){
+        public int getMeetingCount(){
         SQLiteDatabase db = this.getReadableDatabase();
 
         String countQuery = "SELECT * FROM " + Constants.TABLE_NAME;
@@ -162,5 +174,111 @@ public class DataBaseHandler extends SQLiteOpenHelper
 
         return count;
     }
+
+
+    //////////////////// PARTICIPANT TABLE ////////////////////
+
+        public void addParticipant(Participant participant){
+            SQLiteDatabase db = this.getWritableDatabase();
+
+            ContentValues values = new ContentValues();
+            values.put(Constants.COLUMN_EMAIL, participant.getEmail());
+
+            db.insert(Constants.TABLE_NAME_B, null, values);
+        }
+
+        public Participant getParticipant(int id){
+            SQLiteDatabase db = this.getReadableDatabase();
+
+            Participant participant = new Participant();
+
+            Cursor cursor = db.query(Constants.TABLE_NAME_B,
+                    new String[]{Constants.COLUMN_ID_B, Constants.COLUMN_EMAIL},
+                    Constants.COLUMN_ID_B + "=?",
+                    null, null, null, null);
+
+            if (cursor != null){
+                participant.setId(cursor.getInt(0));
+                participant.setEmail(cursor.getString(1));
+
+                cursor.close();
+            }
+
+            return participant;
+        }
+
+        public List<Participant> getAllParticipant(){
+            SQLiteDatabase db = this.getReadableDatabase();
+
+            List<Participant> participantList = new ArrayList<>();
+
+
+            Cursor cursor = db.query(Constants.TABLE_NAME_B,
+                    new String[]{Constants.COLUMN_ID_B, Constants.COLUMN_EMAIL},
+                    Constants.COLUMN_ID_B + "=?",
+                    null, null, null, null);
+
+            if (cursor.moveToNext()){
+                do{
+                    Participant participant = new Participant();
+
+                    participant.setId(cursor.getInt(0));
+                    participant.setEmail(cursor.getString(1));
+
+                    participantList.add(participant);
+                }while (cursor.moveToNext());
+
+                cursor.close();
+            }
+
+            return participantList;
+        }
+
+        public int updateParticipant(Participant participant){
+            SQLiteDatabase db = this.getWritableDatabase();
+
+            ContentValues values = new ContentValues();
+            values.put(Constants.COLUMN_EMAIL, participant.getEmail());
+
+            int update = db.update(Constants.TABLE_NAME_B, values,
+                    Constants.COLUMN_ID_B + "=?",
+                    new String[]{String.valueOf(participant.getId())});
+
+            db.close();
+
+            return update;
+        }
+
+        public void deleteParticipant(int id){
+            SQLiteDatabase db = this.getWritableDatabase();
+
+            db.delete(Constants.TABLE_NAME_B, Constants.COLUMN_ID_B + "=?",
+                    new String[]{String.valueOf(id)});
+
+            db.close();
+        }
+
+        public void deleteAllParticipant(){
+            SQLiteDatabase db = this.getReadableDatabase();
+
+            for (Participant participant : getAllParticipant()){
+                db.delete(Constants.TABLE_NAME_B, Constants.COLUMN_ID_B + "=?",
+                        new String[]{String.valueOf(participant.getId())});
+            }
+        }
+
+        public int getParticipantCount(){
+            SQLiteDatabase db = this.getReadableDatabase();
+
+            String countQuery = "SELECT * FROM " + Constants.TABLE_NAME_B;
+
+            Cursor cursor = db.rawQuery(countQuery, null);
+
+            int count = cursor.getCount();
+
+            cursor.close();
+
+            return count;
+        }
 
 }
