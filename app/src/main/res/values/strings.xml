@@ -1,4 +1,13 @@
 <resources>
     <string name="app_name">Ma Réu</string>
     <string name="action_settings">Settings</string>
+    <string name="enter_meeting">Entrer une réunion</string>
+    <string name="meeting_name">Nom</string>
+    <string name="meeting_place">Lieu</string>
+    <string name="meeting_time">Heure</string>
+    <string name="meeting_participant">Participant (email uniquement)</string>
+    <string name="save_button">Enregistrer</string>
+    <string name="meeting_subject">Sujet</string>
+    <string name="number_of_participant">Nombre de participant : 0</string>
+    <string name="add_participant">Ajouter un participant</string>
 </resources>

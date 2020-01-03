@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:padding="20dp">
+
+    <EditText
+        android:id="@+id/meeting_participant"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="@string/meeting_participant"
+        android:importantForAutofill="no"
+        android:inputType="textEmailAddress"/>
+
+    <Button
+        android:id="@+id/save_button"
+        android:layout_marginTop="20dp"
+        android:layout_height="wrap_content"
+        android:layout_width="wrap_content"
+        android:layout_below="@+id/meeting_participant"
+        android:text="@string/save_button"
+        android:textStyle="bold|italic"
+        android:layout_centerHorizontal="true"/>
+
+</RelativeLayout>
