@@ -1,11 +1,11 @@
 package com.jofiagtech.maru.adapter;
 
-import android.content.ContentValues;
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -21,12 +21,11 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
 {
     private Context mContext;
     private List<Meeting> mMeetingList;
-    private List<Participant> mParticipantList;
+    private String email = "";
 
-    public RecyclerViewAdapter(Context context, List<Meeting> meetingList, List<Participant> participantList) {
+    public RecyclerViewAdapter(Context context, List<Meeting> meetingList) {
         mContext = context;
         mMeetingList = meetingList;
-        mParticipantList = participantList;
     }
 
     @NonNull
@@ -43,10 +42,8 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         Meeting meeting = mMeetingList.get(position);
 
-        StringBuilder email = new StringBuilder();
-
-        for (Participant participant : mParticipantList){
-            email.append(participant.getEmail()).append(", ");
+        for (Participant participant : meeting.getParticipantList()){
+            email = email + participant.getEmail() + ", ";
         }
 
         holder.subject.setText(meeting.getSubject());
@@ -54,6 +51,8 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
         holder.place.setText(meeting.getPlace());
         holder.participantEmail.setText(email);
         holder.date.setText(meeting.getDate());
+
+        email = "";
 
     }
 
@@ -63,16 +62,16 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
         return mMeetingList.size();
     }
 
-    public class ViewHolder extends RecyclerView.ViewHolder
+    class ViewHolder extends RecyclerView.ViewHolder
     {
-        public TextView subject;
-        public TextView time;
-        public TextView place;
-        public TextView participantEmail;
-        public TextView date;
-        public Button deleteButton;
+        TextView subject;
+        TextView time;
+        TextView place;
+        TextView participantEmail;
+        TextView date;
+        ImageButton deleteButton;
 
-        public ViewHolder(@NonNull View itemView)
+        ViewHolder(@NonNull View itemView)
         {
             super(itemView);
 

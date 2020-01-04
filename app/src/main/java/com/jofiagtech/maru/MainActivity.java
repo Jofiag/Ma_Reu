@@ -12,9 +12,12 @@ import android.widget.TextView;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
+import com.jofiagtech.maru.adapter.RecyclerViewAdapter;
 import com.jofiagtech.maru.model.Meeting;
 import com.jofiagtech.maru.model.Participant;
 
@@ -34,12 +37,17 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private Button mSaveParticipantButton;
 
     private List<Meeting> mMeetingList;
-    private List<Participant> mParticipantList;
+
+    private Participant mParticipantSaved;
 
     private AlertDialog.Builder mBuilder;
-    private AlertDialog mDialog;
+    private AlertDialog mMeetingDialog;
+    private AlertDialog mParticipantDialog;
 
     private int mParticipantCounter = 0;
+
+    private RecyclerView mRecyclerView;
+    private RecyclerViewAdapter mRecyclerViewAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -50,7 +58,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         setSupportActionBar(toolbar);
 
         mMeetingList = new ArrayList<>();
-        mParticipantList = new ArrayList<>();
+
+        mRecyclerView = findViewById(R.id.recycler_view);
+        mRecyclerView.setHasFixedSize(true);
+        mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+
+        mRecyclerViewAdapter = new RecyclerViewAdapter(this, mMeetingList);
+        mRecyclerView.setAdapter(mRecyclerViewAdapter);
+        mRecyclerViewAdapter.notifyDataSetChanged();
 
         settingFab();
     }
@@ -90,8 +105,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         mSaveMeetingButton.setOnClickListener(this);
 
         mBuilder.setView(view);
-        mDialog = mBuilder.create();// creating our dialog object
-        mDialog.show();// important step!
+        mMeetingDialog = mBuilder.create();// creating our dialog object
+        mMeetingDialog.show();// important step!
     }
 
     private void createParticipantPopup(){
@@ -102,57 +117,52 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         mSaveParticipantButton.setOnClickListener(this);
 
         mBuilder.setView(view);
-        mDialog = mBuilder.create();
-        mDialog.show();
+        mParticipantDialog = mBuilder.create();
+        mParticipantDialog.show();
     }
 
-    private void saveEmail(View view) {
+    private Participant saveParticipant(View view) {
         Participant participant = new Participant();
 
         String email = mParticipantEmail.getText().toString().trim();
 
         participant.setEmail(email);
 
-        mParticipantList.add(participant);
-
         mParticipantCounter++;
-        mNumberOfParticipant.setText(MessageFormat.format("Nombre de participant: {0}",
-                mParticipantCounter));
 
-        Snackbar.make(view, "Participant Saved",Snackbar.LENGTH_SHORT)
-                .show();
-        new Handler().postDelayed(new Runnable()
-        {
-            @Override
-            public void run()
-            {
-                mDialog.dismiss();
-            }
-        }, 1200);//1 seconde
+        return participant;
     }
 
     private void saveMeeting(View view){
         Meeting meeting = new Meeting();
+        List<Participant> participantList = new ArrayList<>();
 
         String subject = mMeetingSubject.getText().toString().trim();
         String time = mMeetingTime.getText().toString().trim();
         String place = mMeetingPlace.getText().toString().trim();
+        participantList.add(mParticipantSaved);
 
         meeting.setSubject(subject);
         meeting.setTime(time);
         meeting.setPlace(place);
+        meeting.setParticipantList(participantList);
         meeting.setNumberOfParticipant(mParticipantCounter);
 
         mMeetingList.add(meeting);
 
         Snackbar.make(view, "Meeting saved", Snackbar.LENGTH_SHORT).show();
 
+        //mRecyclerViewAdapter = null;
+        mRecyclerViewAdapter = new RecyclerViewAdapter(this, mMeetingList);
+        mRecyclerView.setAdapter(mRecyclerViewAdapter);
+
         new Handler().postDelayed(new Runnable()
         {
             @Override
             public void run()
             {
-                mDialog.dismiss();
+                mParticipantCounter = 0;
+                mMeetingDialog.dismiss();
             }
         }, 1200);//1 seconde
     }
@@ -194,18 +204,36 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 if (!mMeetingSubject.getText().toString().isEmpty()
                         && !mMeetingTime.getText().toString().isEmpty()
                         && !mMeetingPlace.getText().toString().isEmpty()
-                        && mParticipantCounter != 0)
+                        && mParticipantCounter != 0){
                     saveMeeting(view);
+                }
                 else
                     Snackbar.make(view, "Empty Fields not Allowed", Snackbar.LENGTH_SHORT)
                             .show();
                 break;
             case R.id.save_partcp_button:
-                if (!mParticipantEmail.getText().toString().isEmpty())
-                    saveEmail(view);
+                if (!mParticipantEmail.getText().toString().isEmpty()) {
+                    mParticipantSaved = saveParticipant(view);
+
+                    mNumberOfParticipant.setText(MessageFormat.format("Nombre de participant: {0}",
+                    mParticipantCounter));
+
+                    Snackbar.make(view, "Participant Saved",Snackbar.LENGTH_SHORT)
+                    .show();
+                    new Handler().postDelayed(new Runnable()
+                    {
+                        @Override
+                        public void run()
+                        {
+                            mParticipantDialog.dismiss();
+                        }
+                    }, 1200);//1 seconde*/
+
+                }
                 else
                     Snackbar.make(view, "Empty Fields not Allowed", Snackbar.LENGTH_SHORT)
                             .show();
+
                 break;
         }
     }
