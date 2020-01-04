@@ -1,30 +1,45 @@
 package com.jofiagtech.maru;
 
 import android.os.Bundle;
+import android.os.Handler;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.TextView;
 
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.android.material.snackbar.Snackbar;
-
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
-import android.view.View;
-import android.view.Menu;
-import android.view.MenuItem;
-import android.widget.Button;
-import android.widget.TextView;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.material.snackbar.Snackbar;
+import com.jofiagtech.maru.model.Meeting;
+import com.jofiagtech.maru.model.Participant;
 
-public class MainActivity extends AppCompatActivity
+import java.text.MessageFormat;
+import java.util.ArrayList;
+import java.util.List;
+
+public class MainActivity extends AppCompatActivity implements View.OnClickListener
 {
-    /*private TextView mMeetingSubject;
-    private TextView mMeetingTime;
-    private TextView mMeetingPlace;
+    private EditText mMeetingSubject;
+    private EditText mMeetingTime;
+    private EditText mMeetingPlace;
     private TextView mNumberOfParticipant;
+    private EditText mParticipantEmail;
     private Button mAddParticipantButton;
     private Button mSaveMeetingButton;
     private Button mSaveParticipantButton;
 
-    private int mParticipantCounter = 0;*/
+    private List<Meeting> mMeetingList;
+    private List<Participant> mParticipantList;
+
+    private AlertDialog.Builder mBuilder;
+    private AlertDialog mDialog;
+
+    private int mParticipantCounter = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -34,9 +49,25 @@ public class MainActivity extends AppCompatActivity
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+        mMeetingList = new ArrayList<>();
+        mParticipantList = new ArrayList<>();
+
         settingFab();
     }
 
+    private void setUiMeetingReferences(View view){
+        mMeetingSubject = view.findViewById(R.id.meeting_subject);
+        mMeetingTime = view.findViewById(R.id.meeting_time);
+        mMeetingPlace = view.findViewById(R.id.meeting_place);
+        mNumberOfParticipant = view.findViewById(R.id.number_of_participant);
+        mAddParticipantButton = view.findViewById(R.id.add_prtcp_button);
+        mSaveMeetingButton = view.findViewById(R.id.save_meeting_button);
+    }
+    private void setUiParticipantPopupReferences(View view){
+        mParticipantEmail = view.findViewById(R.id.participant_email);
+        mSaveParticipantButton = view.findViewById(R.id.save_partcp_button);
+
+    }
     private void settingFab(){
         FloatingActionButton fab = findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener()
@@ -44,15 +75,88 @@ public class MainActivity extends AppCompatActivity
             @Override
             public void onClick(View view)
             {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+                createMeetingPopup();
             }
         });
     }
 
-    /*private void creatMeetingPopup(){}
+    private void createMeetingPopup(){
+        mBuilder = new AlertDialog.Builder(this);
+        View view = getLayoutInflater().inflate(R.layout.meeting_popup, null);
 
-    private void createParticipantPopup(){}*/
+        setUiMeetingReferences(view);
+
+        mAddParticipantButton.setOnClickListener(this);
+        mSaveMeetingButton.setOnClickListener(this);
+
+        mBuilder.setView(view);
+        mDialog = mBuilder.create();// creating our dialog object
+        mDialog.show();// important step!
+    }
+
+    private void createParticipantPopup(){
+        View view = getLayoutInflater().inflate(R.layout.participant_popup, null);
+
+        setUiParticipantPopupReferences(view);
+
+        mSaveParticipantButton.setOnClickListener(this);
+
+        mBuilder.setView(view);
+        mDialog = mBuilder.create();
+        mDialog.show();
+    }
+
+    private void saveEmail(View view) {
+        Participant participant = new Participant();
+
+        String email = mParticipantEmail.getText().toString().trim();
+
+        participant.setEmail(email);
+
+        mParticipantList.add(participant);
+
+        mParticipantCounter++;
+        mNumberOfParticipant.setText(MessageFormat.format("Nombre de participant: {0}",
+                mParticipantCounter));
+
+        Snackbar.make(view, "Participant Saved",Snackbar.LENGTH_SHORT)
+                .show();
+        new Handler().postDelayed(new Runnable()
+        {
+            @Override
+            public void run()
+            {
+                mDialog.dismiss();
+            }
+        }, 1200);//1 seconde
+    }
+
+    private void saveMeeting(View view){
+        Meeting meeting = new Meeting();
+
+        String subject = mMeetingSubject.getText().toString().trim();
+        String time = mMeetingTime.getText().toString().trim();
+        String place = mMeetingPlace.getText().toString().trim();
+
+        meeting.setSubject(subject);
+        meeting.setTime(time);
+        meeting.setPlace(place);
+        meeting.setNumberOfParticipant(mParticipantCounter);
+
+        mMeetingList.add(meeting);
+
+        Snackbar.make(view, "Meeting saved", Snackbar.LENGTH_SHORT).show();
+
+        new Handler().postDelayed(new Runnable()
+        {
+            @Override
+            public void run()
+            {
+                mDialog.dismiss();
+            }
+        }, 1200);//1 seconde
+    }
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu)
@@ -77,5 +181,32 @@ public class MainActivity extends AppCompatActivity
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onClick(View view)
+    {
+        switch (view.getId()){
+            case R.id.add_prtcp_button:
+                    createParticipantPopup();
+                break;
+            case R.id.save_meeting_button:
+                if (!mMeetingSubject.getText().toString().isEmpty()
+                        && !mMeetingTime.getText().toString().isEmpty()
+                        && !mMeetingPlace.getText().toString().isEmpty()
+                        && mParticipantCounter != 0)
+                    saveMeeting(view);
+                else
+                    Snackbar.make(view, "Empty Fields not Allowed", Snackbar.LENGTH_SHORT)
+                            .show();
+                break;
+            case R.id.save_partcp_button:
+                if (!mParticipantEmail.getText().toString().isEmpty())
+                    saveEmail(view);
+                else
+                    Snackbar.make(view, "Empty Fields not Allowed", Snackbar.LENGTH_SHORT)
+                            .show();
+                break;
+        }
     }
 }

@@ -7,7 +7,7 @@
     android:padding="20dp">
 
     <EditText
-        android:id="@+id/meeting_participant"
+        android:id="@+id/participant_email"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="@string/meeting_participant"
@@ -15,11 +15,11 @@
         android:inputType="textEmailAddress"/>
 
     <Button
-        android:id="@+id/save_button"
+        android:id="@+id/save_partcp_button"
         android:layout_marginTop="20dp"
         android:layout_height="wrap_content"
         android:layout_width="wrap_content"
-        android:layout_below="@+id/meeting_participant"
+        android:layout_below="@+id/participant_email"
         android:text="@string/save_button"
         android:textStyle="bold|italic"
         android:layout_centerHorizontal="true"/>
