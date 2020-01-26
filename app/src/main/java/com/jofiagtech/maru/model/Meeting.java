@@ -15,6 +15,14 @@ public class Meeting
     public Meeting() {
     }
 
+    public Meeting(String subject, String time, String place, List<Participant> participantList)
+    {
+        this.subject = subject;
+        this.time = time;
+        this.place = place;
+        this.participantList = participantList;
+    }
+
     public Meeting(String subject, String time, String place, List<Participant> participantList, int numberOfParticipant)
     {
         this.subject = subject;
