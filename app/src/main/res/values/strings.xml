@@ -4,7 +4,7 @@
     <string name="enter_meeting">Entrer une réunion</string>
     <string name="meeting_name">Nom</string>
     <string name="meeting_place">Lieu</string>
-    <string name="meeting_time">Heure</string>
+    <string name="meeting_time">Heure (19h00)</string>
     <string name="meeting_participant">Participant (email uniquement)</string>
     <string name="save_button">Enregistrer</string>
     <string name="meeting_subject">Sujet</string>
@@ -16,4 +16,8 @@
     <string name="participant_email">Participant email</string>
     <string name="separation">-</string>
     <string name="date">Date</string>
+    <string name="profile_description">Image</string>
+    <string name="name">Name</string>
+    <string name="tiret">-</string>
+    <string name="meeting_details">Subject - Hour - Room</string>
 </resources>

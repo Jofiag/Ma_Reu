@@ -1,5 +1,6 @@
 package com.jofiagtech.maru;
 
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.Menu;
@@ -21,8 +22,10 @@ import com.jofiagtech.maru.adapter.RecyclerViewAdapter;
 import com.jofiagtech.maru.model.Meeting;
 import com.jofiagtech.maru.model.Participant;
 
+import java.text.DateFormat;
 import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener
@@ -37,8 +40,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private Button mSaveParticipantButton;
 
     private List<Meeting> mMeetingList;
-
-    private Participant mParticipantSaved;
+    private List<Participant> mParticipantList;
 
     private AlertDialog.Builder mBuilder;
     private AlertDialog mMeetingDialog;
@@ -58,6 +60,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         setSupportActionBar(toolbar);
 
         mMeetingList = new ArrayList<>();
+        mParticipantList = new ArrayList<>();
 
         mRecyclerView = findViewById(R.id.recycler_view);
         mRecyclerView.setHasFixedSize(true);
@@ -135,18 +138,21 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     private void saveMeeting(View view){
         Meeting meeting = new Meeting();
-        List<Participant> participantList = new ArrayList<>();
 
         String subject = mMeetingSubject.getText().toString().trim();
         String time = mMeetingTime.getText().toString().trim();
         String place = mMeetingPlace.getText().toString().trim();
-        participantList.add(mParticipantSaved);
+
+        DateFormat dateFormat = DateFormat.getDateInstance();
+        String formattedDate = dateFormat.format(new Date(System.currentTimeMillis()).getTime()); // Feb 23, 2020
 
         meeting.setSubject(subject);
         meeting.setTime(time);
         meeting.setPlace(place);
-        meeting.setParticipantList(participantList);
+        meeting.setParticipantList(mParticipantList);
+        mParticipantList.clear();
         meeting.setNumberOfParticipant(mParticipantCounter);
+        meeting.setDate(formattedDate);
 
         mMeetingList.add(meeting);
 
@@ -164,7 +170,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 mParticipantCounter = 0;
                 mMeetingDialog.dismiss();
             }
-        }, 1200);//1 seconde
+        }, 600);// 0,5 seconde
     }
 
 
@@ -213,7 +219,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 break;
             case R.id.save_partcp_button:
                 if (!mParticipantEmail.getText().toString().isEmpty()) {
-                    mParticipantSaved = saveParticipant(view);
+                    mParticipantList.add(saveParticipant(view));
 
                     mNumberOfParticipant.setText(MessageFormat.format("Nombre de participant: {0}",
                     mParticipantCounter));
@@ -227,7 +233,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         {
                             mParticipantDialog.dismiss();
                         }
-                    }, 1200);//1 seconde*/
+                    }, 600);//0,5 seconde*/
 
                 }
                 else
