@@ -2,6 +2,7 @@ package com.jofiagtech.maru.adapter;
 
 import android.content.Context;
 import android.os.Build;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -43,7 +44,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
     @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        Meeting meeting = mMeetingList.get(position);
+        final Meeting meeting = mMeetingList.get(position);
         String string = "";
 
         for (int i = 0; i < meeting.getParticipantList().size(); i++) {
@@ -63,8 +64,21 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
         DateFormat dateFormat = DateFormat.getDateInstance();
         String formattedDate = dateFormat.format(new Date(System.currentTimeMillis()).getTime()); // Feb 23, 2020
 
-        if (!meeting.getDate().equals(formattedDate))
-            holder.date.setText(meeting.getDate());
+        if (meeting.getDate() != null){
+            if (!meeting.getDate().equals(formattedDate))
+                holder.date.setText(meeting.getDate());
+        }
+
+        holder.deleteButton.setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View v)
+            {
+                mMeetingList.remove(meeting);
+                new RecyclerViewAdapter(mContext, mMeetingList);
+                Log.d("TD", "onClick: ");
+            }
+        });
     }
 
     @Override
@@ -75,19 +89,11 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
 
     class ViewHolder extends RecyclerView.ViewHolder
     {
-        /*TextView subject;
-        TextView time;
-        TextView place;
-        TextView participantEmail;
-        TextView date;
-        Button deleteButton;*/
-
         ConstraintLayout constraintLayout;
         TextView meetingDetails;
         TextView participantEmail;
         TextView date;
         ImageButton deleteButton;
-
 
         ViewHolder(@NonNull final View itemView)
         {
@@ -105,15 +111,6 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
             date = itemView.findViewById(R.id.mlr_participant_date);
             deleteButton = itemView.findViewById(R.id.delete_button);
             constraintLayout = itemView.findViewById(R.id.constraint_layout);
-
-            deleteButton.setOnClickListener(new View.OnClickListener()
-            {
-                @Override
-                public void onClick(View view)
-                {
-
-                }
-            });
 
             meetingDetails.setOnClickListener(new View.OnClickListener()
             {

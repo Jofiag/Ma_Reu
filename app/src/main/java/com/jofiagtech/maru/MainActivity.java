@@ -1,6 +1,5 @@
 package com.jofiagtech.maru;
 
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.Menu;
@@ -8,6 +7,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AlertDialog;
@@ -19,14 +19,21 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
 import com.jofiagtech.maru.adapter.RecyclerViewAdapter;
+import com.jofiagtech.maru.di.DI;
+import com.jofiagtech.maru.event.DeleteMeetingEvent;
 import com.jofiagtech.maru.model.Meeting;
 import com.jofiagtech.maru.model.Participant;
+import com.jofiagtech.maru.service.DummyMeetingGenerator;
+import com.jofiagtech.maru.service.MeetingApiServices;
 
 import java.text.DateFormat;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener
 {
@@ -38,6 +45,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private Button mAddParticipantButton;
     private Button mSaveMeetingButton;
     private Button mSaveParticipantButton;
+    private ImageButton mDeleteButton;
 
     private List<Meeting> mMeetingList;
     private List<Participant> mParticipantList;
@@ -51,6 +59,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private RecyclerView mRecyclerView;
     private RecyclerViewAdapter mRecyclerViewAdapter;
 
+    private MeetingApiServices mApiServices;
+
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
@@ -59,7 +69,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        mMeetingList = new ArrayList<>();
+        mApiServices = DI.getMeetingApiService();
+
+        mMeetingList = mApiServices.getMeetingList();
         mParticipantList = new ArrayList<>();
 
         mRecyclerView = findViewById(R.id.recycler_view);
@@ -150,11 +162,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         meeting.setTime(time);
         meeting.setPlace(place);
         meeting.setParticipantList(mParticipantList);
-        mParticipantList.clear();
+        mParticipantList = new ArrayList<>();
         meeting.setNumberOfParticipant(mParticipantCounter);
         meeting.setDate(formattedDate);
 
         mMeetingList.add(meeting);
+        DummyMeetingGenerator.updateGenerator(mMeetingList);
 
         Snackbar.make(view, "Meeting saved", Snackbar.LENGTH_SHORT).show();
 
@@ -173,6 +186,19 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }, 600);// 0,5 seconde
     }
 
+    @Override
+    protected void onStop()
+    {
+        EventBus.getDefault().register(this);
+        super.onStop();
+    }
+
+    @Override
+    protected void onDestroy()
+    {
+        EventBus.getDefault().unregister(this);
+        super.onDestroy();
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu)
@@ -205,6 +231,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         switch (view.getId()){
             case R.id.add_prtcp_button:
                     createParticipantPopup();
+                break;
+            case R.id.delete_button:
+
                 break;
             case R.id.save_meeting_button:
                 if (!mMeetingSubject.getText().toString().isEmpty()
@@ -242,5 +271,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
                 break;
         }
+    }
+
+
+
+    @Subscribe
+    public void onDeleteMeeting(DeleteMeetingEvent event){
+        mApiServices.deleteMeeting(event.mMeeting);
     }
 }

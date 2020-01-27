@@ -6,23 +6,29 @@ import java.util.List;
 
 public class DummyMeetingApiService implements MeetingApiServices
 {
-    private List<Meeting> meetingList = DummyMeetingGenerator.generateMeetings();
+    private List<Meeting> mMeetingList = DummyMeetingGenerator.generateMeetings();
 
     @Override
-    public List<Meeting> getMeetings()
+    public List<Meeting> getMeetingList()
     {
-        return meetingList;
+        return mMeetingList;
     }
 
     @Override
     public void addMeeting(Meeting meeting)
     {
-        meetingList.add(meeting);
+        mMeetingList.add(meeting);
     }
 
     @Override
     public void deleteMeeting(Meeting meeting)
     {
-        meetingList.remove(meeting);
+        mMeetingList.remove(meeting);
+    }
+
+    @Override
+    public void setMeetingList(List<Meeting> meetingList)
+    {
+        mMeetingList = meetingList;
     }
 }

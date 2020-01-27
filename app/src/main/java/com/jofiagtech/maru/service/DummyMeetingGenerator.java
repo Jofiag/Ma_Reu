@@ -9,7 +9,7 @@ import java.util.List;
 
 public class DummyMeetingGenerator
 {
-    private static List<Meeting> DUMMY_MEETING = Arrays.asList(
+    public static List<Meeting> DUMMY_MEETING = Arrays.asList(
             new Meeting( "Reunion 1", "15h00", "Salle Elizabethe", Arrays.asList(
                     new Participant("joel@lamzone.fr"),
                     new Participant("alex@lamzone.fr"),
@@ -28,6 +28,10 @@ public class DummyMeetingGenerator
     );
 
     public static List<Meeting> generateMeetings() {
-        return DUMMY_MEETING;
+        return new ArrayList<>(DUMMY_MEETING);
+    }
+
+    public static void updateGenerator(List<Meeting> meetingList){
+        DUMMY_MEETING = meetingList;
     }
 }
