@@ -280,7 +280,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     {
         super.onStart();
         EventBus.getDefault().register(this);
-        initMeetingList();
+        //initMeetingList();
     }
 
     @Override
