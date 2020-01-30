@@ -1,11 +1,14 @@
 package com.jofiagtech.maru.adapter;
 
+import android.app.DatePickerDialog;
+import android.app.TimePickerDialog;
 import android.content.Context;
 import android.os.Build;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
@@ -21,6 +24,7 @@ import com.jofiagtech.maru.model.Meeting;
 import org.greenrobot.eventbus.EventBus;
 
 import java.text.DateFormat;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -34,6 +38,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
         mMeetingList = meetingList;
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
     @NonNull
     @Override
     public RecyclerViewAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType)
@@ -46,7 +51,8 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
 
     @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
     @Override
-    public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
+    public void onBindViewHolder(ViewHolder holder, int position) {
+        final DateFormat dateFormat = DateFormat.getDateTimeInstance();
         final Meeting meeting = mMeetingList.get(position);
         String string = "";
 
@@ -64,7 +70,6 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
         holder.meetingDetails.setText(String.format("%s - %s - %s", meeting.getSubject(), meeting.getTime(), meeting.getPlace()));
         holder.participantEmail.setText(string);
 
-        DateFormat dateFormat = DateFormat.getDateInstance();
         String formattedDate = dateFormat.format(new Date(System.currentTimeMillis()).getTime()); // Feb 23, 2020
 
         if (meeting.getDate() != null){
@@ -72,16 +77,11 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
                 holder.date.setText(meeting.getDate());
         }
 
-        holder.deleteButton.setOnClickListener(new View.OnClickListener()
-        {
-            @Override
-            public void onClick(View v)
-            {
-                EventBus.getDefault().post(new DeleteMeetingEvent(meeting));
-                /*mMeetingList.remove(meeting);
-                new RecyclerViewAdapter(mContext, mMeetingList);*/
-                Log.d("TD", "onClick: ");
-            }
+        holder.deleteButton.setOnClickListener(v -> {
+            EventBus.getDefault().post(new DeleteMeetingEvent(meeting));
+            /*mMeetingList.remove(meeting);
+            new RecyclerViewAdapter(mContext, mMeetingList);*/
+            Log.d("TD", "onClick: ");
         });
     }
 
@@ -98,48 +98,32 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
         TextView participantEmail;
         TextView date;
         ImageButton deleteButton;
+        Button dateButton;
 
+        @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
         ViewHolder(@NonNull final View itemView)
         {
             super(itemView);
-
-            /*subject = itemView.findViewById(R.id.mlr_subject);
-            time = itemView.findViewById(R.id.mlr_time);
-            place = itemView.findViewById(R.id.mlr_place);
-            participantEmail = itemView.findViewById(R.id.mlr_participant_email);
-            date = itemView.findViewById(R.id.mlr_participant_date);
-            deleteButton = itemView.findViewById(R.id.delete_button);*/
 
             meetingDetails = itemView.findViewById(R.id.mlr_title);
             participantEmail = itemView.findViewById(R.id.mlr_participant_email);
             date = itemView.findViewById(R.id.mlr_participant_date);
             deleteButton = itemView.findViewById(R.id.delete_button);
+            dateButton = itemView.findViewById(R.id.date_button);
             constraintLayout = itemView.findViewById(R.id.constraint_layout);
 
-            meetingDetails.setOnClickListener(new View.OnClickListener()
-            {
-                @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
-                @Override
-                public void onClick(View v)
-                {
-                    if (meetingDetails.getMaxLines() == 1)
-                        meetingDetails.setMaxLines(10);
-                    else
-                        meetingDetails.setMaxLines(1);
-                }
+            meetingDetails.setOnClickListener(v -> {
+                if (meetingDetails.getMaxLines() == 1)
+                    meetingDetails.setMaxLines(10);
+                else
+                    meetingDetails.setMaxLines(1);
             });
 
-            participantEmail.setOnClickListener(new View.OnClickListener()
-            {
-                @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
-                @Override
-                public void onClick(View v)
-                {
-                    if (participantEmail.getMaxLines() == 1)
-                        participantEmail.setMaxLines(10);
-                    else
-                        participantEmail.setMaxLines(1);
-                }
+            participantEmail.setOnClickListener(v -> {
+                if (participantEmail.getMaxLines() == 1)
+                    participantEmail.setMaxLines(10);
+                else
+                    participantEmail.setMaxLines(1);
             });
         }
     }

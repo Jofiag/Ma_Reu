@@ -1,5 +1,7 @@
 package com.jofiagtech.maru;
 
+import android.app.DatePickerDialog;
+import android.app.TimePickerDialog;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.Menu;
@@ -32,6 +34,7 @@ import org.greenrobot.eventbus.Subscribe;
 import java.text.DateFormat;
 import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -46,6 +49,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private Button mAddParticipantButton;
     private Button mSaveMeetingButton;
     private Button mSaveParticipantButton;
+    private Button mDateButton;
     private ImageButton mDeleteButton;
 
     private List<Meeting> mMeetingList;
@@ -61,6 +65,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private RecyclerViewAdapter mRecyclerViewAdapter;
 
     private MeetingApiServices mApiServices;
+
+    private Calendar calendar = Calendar.getInstance();
+    private final DateFormat dateFormat = DateFormat.getDateTimeInstance();
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -93,6 +100,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         mNumberOfParticipant = view.findViewById(R.id.number_of_participant);
         mAddParticipantButton = view.findViewById(R.id.add_prtcp_button);
         mSaveMeetingButton = view.findViewById(R.id.save_meeting_button);
+        mDateButton = view.findViewById(R.id.date_button);
     }
     private void setUiParticipantPopupReferences(View view){
         mParticipantEmail = view.findViewById(R.id.participant_email);
@@ -101,14 +109,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
     private void settingFab(){
         FloatingActionButton fab = findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener()
-        {
-            @Override
-            public void onClick(View view)
-            {
-                createMeetingPopup();
-            }
-        });
+        fab.setOnClickListener(view -> createMeetingPopup());
     }
 
     private void createMeetingPopup(){
@@ -116,9 +117,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         View view = getLayoutInflater().inflate(R.layout.meeting_popup, null);
 
         setUiMeetingReferences(view);
+        mDateButton.setText(dateFormat.format(new Date(calendar.getTimeInMillis())));
 
         mAddParticipantButton.setOnClickListener(this);
         mSaveMeetingButton.setOnClickListener(this);
+        mDateButton.setOnClickListener(this);
 
         mBuilder.setView(view);
         mMeetingDialog = mBuilder.create();// creating our dialog object
@@ -153,7 +156,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         Meeting meeting = new Meeting();
 
         String subject = mMeetingSubject.getText().toString().trim();
-        String time = mMeetingTime.getText().toString().trim();
+        //String time = mMeetingTime.getText().toString().trim();
+        String time = calendar.get(calendar.HOUR_OF_DAY) + "h" + calendar.MINUTE;
         String place = mMeetingPlace.getText().toString().trim();
 
         DateFormat dateFormat = DateFormat.getDateInstance();
@@ -242,14 +246,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
                     Snackbar.make(view, "Participant Saved",Snackbar.LENGTH_SHORT)
                     .show();
-                    new Handler().postDelayed(new Runnable()
-                    {
-                        @Override
-                        public void run()
-                        {
-                            mParticipantDialog.dismiss();
-                        }
-                    }, 600);//0,5 seconde*/
+                    new Handler().postDelayed(() -> mParticipantDialog.dismiss(), 600);//0,5 seconde*/
 
                 }
                 else
@@ -257,6 +254,27 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                             .show();
 
                 break;
+            case R.id.date_button:
+                DatePickerDialog dateDialog = new DatePickerDialog(this,
+                        (datePicker, year, month, dayOfMonth) -> {
+                            calendar.set(year, month, dayOfMonth);
+                            TimePickerDialog timeDialog = new TimePickerDialog(this,
+                                    (timePicker, hourOfDay, minute) -> {
+                                        calendar.set(Calendar.HOUR_OF_DAY, hourOfDay);
+                                        calendar.set(Calendar.MINUTE, minute);
+                                        mDateButton.setText(dateFormat.format(new Date(calendar.getTimeInMillis())));
+                                    },
+                                    calendar.get(Calendar.HOUR_OF_DAY),
+                                    calendar.get(Calendar.MINUTE),
+                                    true
+                            );
+                            timeDialog.show();
+                        },
+                        calendar.get(Calendar.YEAR),
+                        calendar.get(Calendar.MONTH),
+                        calendar.get(Calendar.DAY_OF_MONTH)
+                );
+                dateDialog.show();
         }
     }
 
@@ -280,7 +298,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     {
         super.onStart();
         EventBus.getDefault().register(this);
-        //initMeetingList();
     }
 
     @Override
