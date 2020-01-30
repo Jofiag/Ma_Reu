@@ -4,9 +4,9 @@ import com.jofiagtech.maru.model.Meeting;
 
 public class DeleteMeetingEvent
 {
-    public Meeting mMeeting;
+    public Meeting meeting;
 
     public DeleteMeetingEvent(Meeting meeting) {
-        mMeeting = meeting;
+        this.meeting = meeting;
     }
 }

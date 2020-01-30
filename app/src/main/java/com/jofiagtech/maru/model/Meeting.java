@@ -1,12 +1,8 @@
 package com.jofiagtech.maru.model;
 
-import android.os.Parcel;
-import android.os.Parcelable;
-
-import java.io.Serializable;
 import java.util.List;
 
-public class Meeting implements Parcelable
+public class Meeting
 {
     private String subject;
     private String time;
@@ -101,20 +97,7 @@ public class Meeting implements Parcelable
         return participantList;
     }
 
-    public void setParticipantList(List<Participant> participantList)
-    {
+    public void setParticipantList(List<Participant> participantList) {
         this.participantList = participantList;
-    }
-
-    @Override
-    public int describeContents()
-    {
-        return 0;
-    }
-
-    @Override
-    public void writeToParcel(Parcel dest, int flags)
-    {
-
     }
 }

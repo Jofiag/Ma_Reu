@@ -26,14 +26,15 @@ import com.jofiagtech.maru.model.Participant;
 import com.jofiagtech.maru.service.DummyMeetingGenerator;
 import com.jofiagtech.maru.service.MeetingApiServices;
 
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+
 import java.text.DateFormat;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import org.greenrobot.eventbus.EventBus;
-import org.greenrobot.eventbus.Subscribe;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener
 {
@@ -187,20 +188,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     @Override
-    protected void onStop()
-    {
-        EventBus.getDefault().register(this);
-        super.onStop();
-    }
-
-    @Override
-    protected void onDestroy()
-    {
-        EventBus.getDefault().unregister(this);
-        super.onDestroy();
-    }
-
-    @Override
     public boolean onCreateOptionsMenu(Menu menu)
     {
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -273,10 +260,33 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
     }
 
+    public void initMeetingList(){
+        List<Meeting> meetingList = mApiServices.getMeetingList();
+
+        mRecyclerView.setAdapter(new RecyclerViewAdapter(this, meetingList));
+    }
+
 
 
     @Subscribe
     public void onDeleteMeeting(DeleteMeetingEvent event){
-        mApiServices.deleteMeeting(event.mMeeting);
+        mApiServices.deleteMeeting(event.meeting);
+
+        initMeetingList();
+    }
+
+    @Override
+    protected void onStart()
+    {
+        super.onStart();
+        EventBus.getDefault().register(this);
+        initMeetingList();
+    }
+
+    @Override
+    protected void onStop()
+    {
+        super.onStop();
+        EventBus.getDefault().unregister(this);
     }
 }

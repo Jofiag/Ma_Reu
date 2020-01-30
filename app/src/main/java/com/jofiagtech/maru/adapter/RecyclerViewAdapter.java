@@ -15,7 +15,10 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.jofiagtech.maru.R;
+import com.jofiagtech.maru.event.DeleteMeetingEvent;
 import com.jofiagtech.maru.model.Meeting;
+
+import org.greenrobot.eventbus.EventBus;
 
 import java.text.DateFormat;
 import java.util.Date;
@@ -74,8 +77,9 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
             @Override
             public void onClick(View v)
             {
-                mMeetingList.remove(meeting);
-                new RecyclerViewAdapter(mContext, mMeetingList);
+                EventBus.getDefault().post(new DeleteMeetingEvent(meeting));
+                /*mMeetingList.remove(meeting);
+                new RecyclerViewAdapter(mContext, mMeetingList);*/
                 Log.d("TD", "onClick: ");
             }
         });
